@@ -152,7 +152,6 @@ export default function SplitWithImage() {
                   onDragStart={(e) => {
                     e.preventDefault();
                   }}
-
                 />
               )})}
             </SimpleGrid>
