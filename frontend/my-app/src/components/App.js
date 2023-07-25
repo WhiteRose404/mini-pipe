@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import {
   Container,
   SimpleGrid,
   Box,
-  Image,
   Flex,
   Heading,
   Text,
@@ -13,12 +12,14 @@ import {
   Icon,
   useColorModeValue,
 } from '@chakra-ui/react'
-import { IoAnalyticsSharp, IoLogoBitcoin, IoSearchSharp } from 'react-icons/io5'
+import { BsPencil } from 'react-icons/bs'
+import { BiEraser } from 'react-icons/bi'
+import { AiOutlineClear } from 'react-icons/ai'
 
-const Feature = ({ text, icon, iconBg }) => {
+const Feature = ({ text, icon, iconBg, handler, highlight }) => {
   return (
-    <Stack direction={'row'} align={'center'}>
-      <Flex w={8} h={8} align={'center'} justify={'center'} rounded={'full'} bg={iconBg}>
+    <Stack direction={'row'} align={'center'} onClick={handler} as="button" px={{base: 2, md: 3}} py={{base: 1, md: 2}} rounded={{base: 'md', md: 'xl'}} bg={highlight ? iconBg : 'transparent'}>
+      <Flex w={6} h={6} align={'center'} justify={'center'} rounded={'full'} bg={iconBg}>
         {icon}
       </Flex>
       <Text fontWeight={600}>{text}</Text>
@@ -26,25 +27,43 @@ const Feature = ({ text, icon, iconBg }) => {
   )
 }
 
+const initialState = (ROW, COL) => {
+  const tmp_table = [];
+  for (let i = 0; i < ROW * COL; i++) {
+    tmp_table.push(false);
+  }
+  return tmp_table;
+}
+
+
 export default function SplitWithImage() {
-  const [table, setTable] = useState([]);
+  // const [table, setTable] = useState([]);
+  const ROW = 20;
+  const COL = 20;
+  const table = useRef(initialState(ROW, COL));
+  const [force, setForce] = useState(0);
+
+  const [hovering, setHovering] = useState(false);
+  const [pen, setPen] = useState(true);
+  const write = (i) => {
+    setPen(true);
+  }
+  const erase = (i) => {
+    setPen(false);
+  }
+  const reset = () => {
+    table.current = initialState(ROW, COL);
+    setForce(force + 1);
+  }
   useEffect(() => {
-    const tmp_table = [];
-    for (let i = 0; i < 20; i++) {
-      const row = [];
-      for(let j = 0; j < 20; j++) {
-        row.push(0)
-      }
-      tmp_table.push(row);
-    }
-    setTable(tmp_table);
+    table.current = initialState(ROW, COL);
   }, []);
   return (
     <Container maxW={'5xl'} py={12}>
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10}>
+      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} alignContent={"center"} alignItems={"center"}>
         <Stack spacing={4}>
           <Text
-            textTransform={'uppercase'}
+            // textTransform={'uppercase'}
             color={'blue.400'}
             fontWeight={600}
             fontSize={'sm'}
@@ -52,32 +71,40 @@ export default function SplitWithImage() {
             p={2}
             alignSelf={'flex-start'}
             rounded={'md'}>
-            Our Story
+            NumProphet
           </Text>
-          <Heading>A digital Product design agency</Heading>
+          <Heading>Hand writing number prediction</Heading>
           <Text color={'gray.500'} fontSize={'lg'}>
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-            eirmod tempor invidunt ut labore
+            Draw the number you want to predict and click on the predict button
+            (hold the mouse button to draw) 
           </Text>
           <Stack
             spacing={4}
             divider={
               <StackDivider borderColor={useColorModeValue('gray.100', 'gray.700')} />
-            }>
+            }
+            direction={'row'}
+            align={'center'}
+            >
             <Feature
-              icon={<Icon as={IoAnalyticsSharp} color={'yellow.500'} w={5} h={5} />}
-              iconBg={useColorModeValue('yellow.100', 'yellow.900')}
-              text={'Business Planning'}
-            />
-            <Feature
-              icon={<Icon as={IoLogoBitcoin} color={'green.500'} w={5} h={5} />}
+              icon={<Icon as={BsPencil} color={'green.500'} w={5} h={5} />}
               iconBg={useColorModeValue('green.100', 'green.900')}
-              text={'Financial Planning'}
+              text={'Write'}
+              highlight={pen}
+              handler={write}
             />
             <Feature
-              icon={<Icon as={IoSearchSharp} color={'purple.500'} w={5} h={5} />}
+              icon={<Icon as={BiEraser} color={'purple.500'} w={5} h={5} />}
               iconBg={useColorModeValue('purple.100', 'purple.900')}
-              text={'Market Analysis'}
+              text={'Erase'}
+              highlight={!pen}
+              handler={erase}
+            />
+            <Feature
+              icon={<Icon as={AiOutlineClear} color={'yellow.500'} w={5} h={5} />}
+              iconBg={useColorModeValue('yellow.100', 'yellow.900')}
+              text={'Reset'}
+              handler={reset}
             />
           </Stack>
         </Stack>
@@ -88,10 +115,47 @@ export default function SplitWithImage() {
           <Box
             minW={{ base: '90%', md: '100%' }}
             aspectRatio={1 / 1}
-            bg={'gray.100'}
             rounded={{base: 'md', md: 'xl'}}
           >
-            
+            <SimpleGrid 
+              columns={ROW}
+              rows={COL}
+              spacing={0}
+              w={'100%'}
+              h={'100%'}
+              rounded={'lg'}
+              overflow={'hidden'}
+              onMouseDown={() => {
+                setHovering(true);
+              }}
+              onMouseUp={() => {
+                setHovering(false);
+              }}
+              border={useColorModeValue('1px solid #00000022', '1px solid #ffffff66')}
+            >
+              {table.current.map((row, i) => {
+                return (<Box
+                  key={i}
+                  bg={row ? useColorModeValue('gray.600', 'gray.400') : "transparent"}
+                  onClick={() => {
+                    table.current[i] = pen;
+                    setForce(force + 1);
+                  }}
+                  onMouseEnter={async () => {
+                    if(hovering) {
+                      console.log("hovering");
+                      table.current[i] = pen;
+                      setForce((force) => force + 1);
+                    }
+                  }}
+                  // disable drag and drop
+                  onDragStart={(e) => {
+                    e.preventDefault();
+                  }}
+
+                />
+              )})}
+            </SimpleGrid>
           </Box>
         </Flex>
       </SimpleGrid>
