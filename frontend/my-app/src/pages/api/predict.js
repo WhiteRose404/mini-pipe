@@ -5,16 +5,15 @@
 // the table array should be a 1D array of 784 booleans
 
 const predict = async (table) => {
-  // const res = await fetch("flaskapi/predict", {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({table}),
-  // });
-  // const data = await res.json();
-  // return data.prediction;
-  return Math.floor(Math.random() * 10);
+  const res = await fetch("http://localhost:5000/predict", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({table}),
+  });
+  const data = await res.json();
+  return data;
 }
 
 export default async function handler(req, res) {
@@ -37,8 +36,8 @@ export default async function handler(req, res) {
       res.status(400).json({ error: "Table should be an array of booleans" });
       return;
     }
-    filterTable.push(table[i] ? 1 : 0);
+    filterTable.push(table[i] ? 0.8 : 0);
   }
   const prediction = await predict(filterTable);
-  res.status(200).json({ prediction });
+  res.status(200).json(prediction);
 }

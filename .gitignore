@@ -2,3 +2,10 @@ node_modules
 
 # ignore model file
 *.keras
+
+# ignore not ready to load all flask files
+flask/bin
+flask/lib
+flask/include
+flask/lib*
+flask/__pycache__
