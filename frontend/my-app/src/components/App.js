@@ -11,6 +11,7 @@ import {
   StackDivider,
   Icon,
   useColorModeValue,
+  Button,
 } from '@chakra-ui/react'
 import { BsPencil } from 'react-icons/bs'
 import { BiEraser } from 'react-icons/bi'
@@ -38,8 +39,8 @@ const initialState = (ROW, COL) => {
 
 export default function SplitWithImage() {
   // const [table, setTable] = useState([]);
-  const ROW = 20;
-  const COL = 20;
+  const ROW = 28;
+  const COL = 28;
   const table = useRef(initialState(ROW, COL));
   const [force, setForce] = useState(0);
 
@@ -54,6 +55,11 @@ export default function SplitWithImage() {
   const reset = () => {
     table.current = initialState(ROW, COL);
     setForce(force + 1);
+  }
+
+  const [loading, setLoading] = useState(false);
+  const predict = async () => {
+    setLoading(true);
   }
   useEffect(() => {
     table.current = initialState(ROW, COL);
@@ -156,6 +162,25 @@ export default function SplitWithImage() {
               )})}
             </SimpleGrid>
           </Box>
+        </Flex>
+        <Flex
+          justify={'space-evenly'}
+          align={'center'}
+        >
+          <Button
+            onClick={predict}
+            isLoading={loading}
+            loadingText="Predicting"
+            colorScheme={loading ? "gray" : "twitter"}
+            size="lg"
+            fontSize="md"
+            fontWeight="bold"
+          >
+              Predict
+          </Button>
+          <Text ml={4} fontSize="lg" fontWeight="bold">
+            {loading ? "..." : "..."}
+          </Text>
         </Flex>
       </SimpleGrid>
     </Container>
