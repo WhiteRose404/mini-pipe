@@ -46,6 +46,9 @@ export default function SplitWithImage() {
 
   const [hovering, setHovering] = useState(false);
   const [pen, setPen] = useState(true);
+
+  const [loading, setLoading] = useState(false);
+  const [prediction, setPrediction] = useState(null);
   const write = (i) => {
     setPen(true);
   }
@@ -57,9 +60,18 @@ export default function SplitWithImage() {
     setForce(force + 1);
   }
 
-  const [loading, setLoading] = useState(false);
   const predict = async () => {
     setLoading(true);
+    const res = await fetch("/api/predict", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({table: table.current}),
+    });
+    const data = await res.json();
+    setPrediction(data.prediction);
+    setLoading(false);
   }
   useEffect(() => {
     table.current = initialState(ROW, COL);
@@ -178,8 +190,8 @@ export default function SplitWithImage() {
           >
               Predict
           </Button>
-          <Text ml={4} fontSize="lg" fontWeight="bold">
-            {loading ? "..." : "..."}
+          <Text ml={4} fontSize="5xl" fontWeight="bold">
+            {loading ? "..." : prediction === null ? "" : prediction}
           </Text>
         </Flex>
       </SimpleGrid>
