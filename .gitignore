@@ -4,8 +4,12 @@ node_modules
 *.keras
 
 # ignore not ready to load all flask files
-flask/bin
+flask/bin*
 flask/lib
+flask/lib*
+*/flask/lib
+flask/include*
+
 flask/include
 flask/lib*
 flask/__pycache__
