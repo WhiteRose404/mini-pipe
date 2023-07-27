@@ -13,3 +13,16 @@ flask/include*
 flask/include
 flask/lib*
 flask/__pycache__
+flask/lib/python3.10/site-packages/pip/__pycache__/__init__.cpython-310.pyc
+
+
+# ignore all files under flask/bin 
+flask/lib/python3.10/site-packages/pip/__pycache__/*
+flask/lib/python3.10/site-packages/pip/__pycache__/__*
+
+# pip env files
+flask/lib/python3.10/site-packages/pip/_internal/commands/*
+flask/lib/python3.10/site-packages/pip/_internal/commands/__pycache__/*
+
+# ignore all files under flask/bin
+flask/bin/*
