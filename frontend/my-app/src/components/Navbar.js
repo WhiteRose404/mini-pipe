@@ -84,13 +84,12 @@ export default function Nav() {
                   </Center>
                   <br />
                   <Center>
-                    <p>Username</p>
+                    <p>You</p>
                   </Center>
                   <br />
                   <MenuDivider />
-                  <MenuItem>Your Servers</MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
-                  <MenuItem>Logout</MenuItem>
+                  <MenuItem>Top Contributors</MenuItem>
+                  <MenuItem>LogOut</MenuItem>
                 </MenuList>
               </Menu>
             </Stack>

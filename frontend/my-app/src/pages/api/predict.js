@@ -18,7 +18,7 @@ const predict = async (table) => {
 
 export default async function handler(req, res) {
   const { table } = req.body;
-  const filterTable = [];
+  // const filterTable = [];
   if(!table) {
     res.status(400).json({ error: "Missing table" });
     return;
@@ -32,12 +32,12 @@ export default async function handler(req, res) {
     return;
   }
   for(let i = 0; i < 784; i++) {
-    if(typeof table[i] !== "boolean") {
+    if(typeof table[i] !== "number") {
       res.status(400).json({ error: "Table should be an array of booleans" });
       return;
     }
-    filterTable.push(table[i] ? 0.8 : 0);
+    // filterTable.push(table[i] ? 0.8 : 0);
   }
-  const prediction = await predict(filterTable);
+  const prediction = await predict(table);
   res.status(200).json(prediction);
 }

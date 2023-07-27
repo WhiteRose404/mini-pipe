@@ -31,7 +31,7 @@ const Feature = ({ text, icon, iconBg, handler, highlight }) => {
 const initialState = (ROW, COL) => {
   const tmp_table = [];
   for (let i = 0; i < ROW * COL; i++) {
-    tmp_table.push(false);
+    tmp_table.push(0);
   }
   return tmp_table;
 }
@@ -62,6 +62,7 @@ export default function SplitWithImage() {
 
   const predict = async () => {
     setLoading(true);
+    console.log("sending table: ", table.current);
     const res = await fetch("/api/predict", {
       method: "POST",
       headers: {
@@ -156,13 +157,13 @@ export default function SplitWithImage() {
                   key={i}
                   bg={row ? useColorModeValue('gray.600', 'gray.400') : "transparent"}
                   onClick={() => {
-                    table.current[i] = pen;
+                    table.current[i] = pen ? 255 : 0;
                     setForce(force + 1);
                   }}
                   onMouseEnter={async () => {
                     if(hovering) {
                       console.log("hovering");
-                      table.current[i] = pen;
+                      table.current[i] = pen ? 255 : 0;
                       setForce((force) => force + 1);
                     }
                   }}
@@ -194,6 +195,25 @@ export default function SplitWithImage() {
             {loading ? "..." : prediction === null ? "" : prediction}
           </Text>
         </Flex>
+        <Flex
+          justify={'space-evenly'}
+          align={'center'}
+        >
+          <Button
+            // onClick={predict}
+            // isLoading={loading}
+            // loadingText="Predicting"
+            colorScheme={"yellow"}
+            size="lg"
+            fontSize="md"
+            fontWeight="bold"
+            disabled={true}
+            isDisabled={true}
+          >
+            Contrubute
+          </Button>
+        </Flex>
+        
       </SimpleGrid>
     </Container>
   )
