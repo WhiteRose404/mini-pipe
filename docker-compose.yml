@@ -3,20 +3,24 @@ services:
   objectstorage:
     image: minio/minio
     ports:
+      - "9090:9090" # api port to be closed
       - "9000:9000"
     networks:
       - localNetwork
     command: "server /data --address :9090 --console-address :9000"
   flask:
-    build: flask/
+    image: highsparrow4reel/hand-writing-back:latest
     ports:
       - "5000:5000"
     networks:
       - localNetwork
+    environment:
+      - MINIO_ACCESS_KEY="minioadmin"
+      - MINIO_SECRET_KEY="minioadmin" # how to write update after we get the actual key from minio container?
     depends_on:
       - objectstorage
   frontend:
-    build: frontend/
+    image: highsparrow4reel/hand-writing-front:latest
     ports:
       - "3000:3000"
     networks:
@@ -28,43 +32,3 @@ volumes:
 
 networks:
   localNetwork:
-
-
-
-    
-# postgres:
-#   image: postgres:latest
-#   ports:
-#     - "5432:5432"
-#   networks:
-#     - localNetwork
-#   environment:
-#     - POSTGRES_USER: <USERNAME>
-#     - POSTGRES_PASSWORD: <PASSSSS>
-#     - POSTGRES_DB: <DBNAME>
-#   volumes:
-#     - ./postgres-data:/var/lib/postgresql/data
-# the actual pipeline
-# pipe:
-#   build: app/
-#   ports:
-#     - "80:80"
-#   networks:
-#     - localNetwork
-#   depends_on:
-#     - postgres
-#     - objectstorage
-# the frontend
-
-
-# depends_on:
-#   - pipe
-# montring:
-#   build: montring/
-#   ports:
-#     - "8080:8080"
-#   networks:
-#     - localNetwork
-#   depends_on:
-#     - pipe
-#     - frontend
